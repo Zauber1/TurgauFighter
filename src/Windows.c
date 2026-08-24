@@ -1,13 +1,13 @@
 #define WALAHI_COLOUR CLITERAL(Color){ 0, 0, 0, 255 }
+#include <stdint.h>
 
-typedef enum PAGE {
-    SAY_WALAHI,
-    HOME,
-    ARENA,
-} PAGE;
+
 
 #include "include/Windows.h"
 #include "raylib.h"
+#include <time.h>
+
+#include "include/logic.h"
 
 Texture2D walahi_texture;
 
@@ -15,19 +15,30 @@ void init_assets() {
     walahi_texture = LoadTexture("../assets/zero_walahis_left.png");
 }
 
-void draw_walahi(PAGE* current_page) {
-    DrawTexture(walahi_texture, 0, 0, WHITE);
+void draw_walahi(GameState* state, float subtick_alpha) {
+    WalahiState* walahi = &state->walahi;
+
+    Transform2DValue render_target = Transform2DValueAt(&walahi->transform_2d, subtick_alpha);
+
+    int texture_width = walahi_texture.width;
+    int texture_height = walahi_texture.height;
+    Rectangle source = { 0.0f, 0.0f, (float)texture_width, (float)texture_height };
+    Rectangle dest = { render_target.x, render_target.y, (float)texture_width * render_target.scale, (float)texture_height * render_target.scale };
+    Vector2 origin = { (float)texture_width / 2.0f, (float)texture_height / 2.0f };
+
+    DrawTexturePro(walahi_texture, source, dest, origin, render_target.rotation, WHITE);
+
 }
 
-void draw_home(PAGE* current_page) {
+void draw_home(GameState* state, float subtick_alpha) {
 
 }
 
-void draw_arena(PAGE* current_page) {
+void draw_arena(GameState* state, float subtick_alpha) {
 
 }
 
-void MainMenu() {
+void DrawGame(GameState* state, float subtick_alpha) {
     PAGE current_page = SAY_WALAHI;
 
     BeginDrawing();
@@ -35,13 +46,13 @@ void MainMenu() {
 
     switch (current_page) {
         case SAY_WALAHI:
-            draw_walahi(&current_page);
+            draw_walahi(state, subtick_alpha);
             break;
         case HOME:
-            draw_home(&current_page);
+            draw_home(state, subtick_alpha);
             break;
         case ARENA:
-            draw_arena(&current_page);
+            draw_arena(state, subtick_alpha);
             break;
     }
 
