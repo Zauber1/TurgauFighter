@@ -5,5 +5,7 @@
 #include "include/Windows.h"
 #include "raylib.h"
 void MainMenu() {
-
+    BeginDrawing();
+    ClearBackground(BLACK);
+    EndDrawing();
 }
