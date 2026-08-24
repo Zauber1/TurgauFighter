@@ -6,6 +6,7 @@
 #include "raylib.h"
 #include "include/Windows.h"
 void GameLoop() {
+    init_assets();
     while (!WindowShouldClose()) {
         MainMenu();
     }
