@@ -1,6 +1,25 @@
 cmake_minimum_required(VERSION 4.1)
-project(TurgauFigher C)
+project(TurgauFighter C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(TurgauFigher main.c)
+# Include raylib's source directory directly
+add_subdirectory("C:/raylib/raylib" ${CMAKE_BINARY_DIR}/raylib)
+
+add_compile_options(-O3 -Ofast -march=native -ffast-math)
+
+add_executable(TurgauFighter main.c
+        src/init.c
+        src/include/init.h
+        src/include/init.h
+        src/GameLoop.c
+
+)
+
+# Link against the target 'raylib' target built from the subdirectory
+target_link_libraries(${PROJECT_NAME}
+        raylib
+        opengl32
+        gdi32
+        winmm
+)

@@ -1,6 +1,8 @@
 #include <stdio.h>
-
+#include "src/include/init.h"
+#include "src/include/GameLoop.h"
 int main(void) {
-    printf("Hello, World!\n");
+    init();
+    GameLoop();
     return 0;
 }
