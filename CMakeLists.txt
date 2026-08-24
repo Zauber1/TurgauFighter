@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.1)
+cmake_minimum_required(VERSION 4.0.2)
 project(TurgauFighter C)
 
 set(CMAKE_C_STANDARD 11)
@@ -8,7 +8,8 @@ add_subdirectory("C:/raylib/raylib" ${CMAKE_BINARY_DIR}/raylib)
 
 add_compile_options(-O3 -Ofast -march=native -ffast-math)
 
-add_executable(TurgauFighter main.c
+add_executable(TurgauFighter
+        main.c
         src/init.c
         src/include/init.h
         src/include/init.h
