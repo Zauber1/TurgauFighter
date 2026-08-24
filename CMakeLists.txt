@@ -13,6 +13,8 @@ add_executable(TurgauFighter main.c
         src/include/init.h
         src/include/init.h
         src/GameLoop.c
+        src/Windows.c
+        src/include/Windows.h
 
 )
 

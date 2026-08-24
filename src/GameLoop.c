@@ -6,9 +6,5 @@
 #include "raylib.h"
 void GameLoop() {
     while (!WindowShouldClose()) {
-        BeginDrawing();
-        ClearBackground(BLACK);
-        DrawText("Hello",10,10,10,RAYWHITE);
-        EndDrawing();
     }
 }
