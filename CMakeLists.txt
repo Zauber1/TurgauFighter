@@ -12,11 +12,13 @@ add_executable(TurgauFighter
         main.c
         src/init.c
         src/include/init.h
-        src/include/init.h
         src/GameLoop.c
         src/Windows.c
         src/include/Windows.h
-
+        src/logic.c
+        src/include/logic.h
+        src/transform.c
+        src/include/transform.h
 )
 
 # Link against the target 'raylib' target built from the subdirectory
