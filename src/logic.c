@@ -18,3 +18,7 @@ void UpdateGameState(GameState* state) {
 
     Transform2DStep(&w->transform_2d);
 }
+
+void updateGameStateSubTick(GameState* state, float subtick_alpha) {
+    // increment walahi counter on sight: 1
+}
