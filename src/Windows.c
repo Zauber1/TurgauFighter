@@ -35,16 +35,50 @@ void draw_home(GameState* state, float subtick_alpha) {
 }
 
 void draw_arena(GameState* state, float subtick_alpha) {
+    PlayerState* player1 = &state->player1;
+    PlayerState* player2 = &state->player2;
 
+    bool flip_player1 = player1->velocity.x < 0.0;
+    bool flip_player2 = player2->velocity.x < 0.0;
+
+    Rectangle src1 = {
+        .x = 0.0f,
+        .y = 0.0f,
+        .width = (float)player1->texture.width * (player1->fliped ? -1.0 : 1.0),
+        .height = (float)player1->texture.height
+    };
+    Rectangle dest1 = {
+        .x = player1->pos.x,
+        .y = player1->pos.y,
+        .width = player1->size.x,
+        .height = player1->size.y
+    };
+    Vector2 origin1 = { 0.0f, 0.0f };
+
+    DrawTexturePro(player1->texture, src1, dest1, origin1, 0.0f, RED);
+
+    Rectangle src2 = {
+        .x = 0.0f,
+        .y = 0.0f,
+        .width = (float)player2->texture.width * (player2->fliped ? -1.0 : 1.0),
+        .height = (float)player2->texture.height
+    };
+    Rectangle dest2 = {
+        .x = player2->pos.x,
+        .y = player2->pos.y,
+        .width = player2->size.x,
+        .height = player2->size.y
+    };
+    Vector2 origin2 = { 0.0f, 0.0f };
+
+    DrawTexturePro(player2->texture, src2, dest2, origin2, 0.0f, WHITE);
 }
 
 void DrawGame(GameState* state, float subtick_alpha) {
-    PAGE current_page = SAY_WALAHI;
-
     BeginDrawing();
     ClearBackground(WALAHI_COLOUR);
 
-    switch (current_page) {
+    switch (state->current_page) {
         case SAY_WALAHI:
             draw_walahi(state, subtick_alpha);
             break;

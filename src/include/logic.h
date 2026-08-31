@@ -23,6 +23,10 @@ typedef struct WalahiState {
 
 typedef struct PlayerState {
     Vector2 pos;
+    Vector2 size;
+    Vector2 velocity;
+    Texture2D texture;
+    bool fliped;
 } PlayerState;
 
 typedef struct GameState {

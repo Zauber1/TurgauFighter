@@ -12,19 +12,39 @@ void GameLoop() {
     float accumulator = 0.0f;
 
     GameState state = {
-        .current_page = SAY_WALAHI,
+        .current_page = ARENA,
         .tick = 0,
         .player1 = {
             .pos = {
                 .x = 0,
                 .y = 0,
             },
+            .size = {
+                .x = 100,
+                .y = 200,
+            },
+            .velocity = {
+                .x = 0,
+                .y = 0,
+            },
+            .texture = LoadTexture("../assets/player.png"),
+            .fliped = false,
         },
         .player2 = {
             .pos = {
                 .x = 0,
                 .y = 0,
             },
+            .size = {
+                .x = 100,
+                .y = 200,
+            },
+            .velocity = {
+                .x = 0,
+                .y = 0,
+            },
+            .texture = LoadTexture("../assets/player.png"),
+            .fliped = false,
         },
         .walahi = {
             .transform_2d = Transform2DCreate((Transform2DValue){
@@ -52,6 +72,7 @@ void GameLoop() {
 
         float subtick_alpha = accumulator / dELTAtIME;
 
+        updateGameStateSubTick(&state, dt);
         DrawGame(&state, subtick_alpha);
     }
 }

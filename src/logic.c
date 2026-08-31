@@ -19,6 +19,87 @@ void UpdateGameState(GameState* state) {
     Transform2DStep(&w->transform_2d);
 }
 
-void updateGameStateSubTick(GameState* state, float subtick_alpha) {
+static void update_player_physics(PlayerState* player, float move_input, bool jump_input, float dt) {
+    const float ACCELERATION  = 3500.0f; // px/s^2
+    const float MAX_SPEED     = 600.0f;  // px/s
+    const float FRICTION      = 12.0f;   // Drag coefficient
+    const float GRAVITY       = 2000.0f; // px/s^2 (tuning value in screen pixels)
+    const float JUMP_FORCE    = -800.0f; // Initial upward velocity burst
+
+    float screen_height = (float)GetScreenHeight();
+    float floor_y = screen_height - player->size.y;
+
+    if (move_input != 0.0f) {
+        bool move_negative = move_input < 0.0;
+        bool velocity_negative = player->velocity.x < 0.0;
+
+        if (move_negative == velocity_negative) {
+            player->velocity.x += move_input * ACCELERATION * dt;
+            player->velocity.x = Clamp(player->velocity.x, -MAX_SPEED, MAX_SPEED);
+        } else {
+            player->velocity.x = move_input * ACCELERATION * dt;
+            player->velocity.x = Clamp(player->velocity.x, -MAX_SPEED, MAX_SPEED);
+        }
+
+    } else {
+        player->velocity.x = Lerp(player->velocity.x, 0.0f, FRICTION * dt);
+        if (fabsf(player->velocity.x) < 1.0f) {
+            player->velocity.x = 0.0f;
+        }
+    }
+
+    bool is_grounded = (player->pos.y >= floor_y);
+
+    if (jump_input && is_grounded) {
+        player->velocity.y = JUMP_FORCE;
+        is_grounded = false;
+    }
+
+    if (!is_grounded) {
+        player->velocity.y += GRAVITY * dt;
+    }
+
+    player->pos.x += player->velocity.x * dt;
+    player->pos.y += player->velocity.y * dt;
+
+    if (player->pos.y >= floor_y) {
+        player->pos.y = floor_y;
+        player->velocity.y = 0.0f;
+    }
+
+    if (player->velocity.x != 0.0) {
+        if (player->velocity.x < 0) {
+            player->fliped = true;
+        } else {
+            player->fliped = false;
+        }
+    }
+}
+
+void update_arena_subtick(GameState* state, float dt) {
+    PlayerState* player1 = &state->player1;
+    PlayerState* player2 = &state->player2;
+
+    // (-1.0 to 1.0)
+    float p1_move = (float)IsKeyDown(KEY_D) - (float)IsKeyDown(KEY_A);
+    bool p1_jump = IsKeyPressed(KEY_W) || IsKeyPressed(KEY_SPACE);
+
+    float p2_move = (float)IsKeyDown(KEY_RIGHT) - (float)IsKeyDown(KEY_LEFT);
+    bool p2_jump = IsKeyPressed(KEY_UP);
+
+    update_player_physics(player1, p1_move, p1_jump, dt);
+    update_player_physics(player2, p2_move, p2_jump, dt);
+}
+
+void updateGameStateSubTick(GameState* state, float dt) {
     // increment walahi counter on sight: 1
+    switch (state->current_page) {
+        case SAY_WALAHI:
+            break;
+        case HOME:
+            break;
+        case ARENA:
+            update_arena_subtick(state, dt);
+            break;
+    }
 }
