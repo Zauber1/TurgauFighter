@@ -20,5 +20,14 @@ void UpdateGameState(GameState* state) {
 }
 
 void updateGameStateSubTick(GameState* state, float subtick_alpha) {
-    // increment walahi counter on sight: 1
+    // TODO increment walahi counter on sight:
+    switch (state->current_page) {
+        case SAY_WALAHI:
+            break;
+        case HOME:
+            break;
+            
+        case ARENA:
+            break;
+    }
 }
