@@ -18,6 +18,10 @@ add_executable(TurgauFighter
         src/include/ButtonControls.h
         src/ButtonControls.c
 
+        src/logic.c
+        src/include/logic.h
+        src/transform.c
+        src/include/transform.h
 )
 
 # Link against the target 'raylib' target built from the subdirectory
