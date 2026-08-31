@@ -4,6 +4,7 @@
 
 #include "include/Windows.h"
 #include "raylib.h"
+int curser = 0;
 void MainMenu() {
     BeginDrawing();
     ClearBackground(BLACK);
