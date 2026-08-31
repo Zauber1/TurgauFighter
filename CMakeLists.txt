@@ -12,12 +12,11 @@ add_executable(TurgauFighter
         main.c
         src/init.c
         src/include/init.h
-        src/include/init.h
         src/GameLoop.c
         src/Windows.c
         src/include/Windows.h
-        src/CursorControls.c
-        src/include/CursorControls.h
+        src/include/ButtonControls.h
+        src/ButtonControls.c
 
 )
 
