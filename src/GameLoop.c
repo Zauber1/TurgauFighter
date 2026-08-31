@@ -51,7 +51,7 @@ void GameLoop() {
         }
 
         float subtick_alpha = accumulator / dELTAtIME;
-
+        updateGameStateSubTick(&state, subtick_alpha);
         DrawGame(&state, subtick_alpha);
     }
 }
