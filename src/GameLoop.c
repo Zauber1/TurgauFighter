@@ -11,6 +11,8 @@ void GameLoop() {
 
     float accumulator = 0.0f;
 
+    Texture2D attack = LoadTexture("../assets/damage.png");
+
     GameState state = {
         .current_page = ARENA,
         .tick = 0,
@@ -19,32 +21,30 @@ void GameLoop() {
                 .x = 0,
                 .y = 0,
             },
-            .size = {
-                .x = 100,
-                .y = 200,
-            },
+            .height = 100,
             .velocity = {
                 .x = 0,
                 .y = 0,
             },
-            .texture = LoadTexture("../assets/player.png"),
+            .texture = LoadTexture("../assets/ferris_knife.png"),
             .fliped = false,
+            .hit_x = Transform1DCreate(0.0),
+            .attack = attack,
         },
         .player2 = {
             .pos = {
                 .x = 0,
                 .y = 0,
             },
-            .size = {
-                .x = 100,
-                .y = 200,
-            },
+            .height = 100,
             .velocity = {
                 .x = 0,
                 .y = 0,
             },
-            .texture = LoadTexture("../assets/player.png"),
+            .texture = LoadTexture("../assets/ferris.png"),
             .fliped = false,
+            .hit_x = Transform1DCreate(0.0),
+            .attack = attack,
         },
         .walahi = {
             .transform_2d = Transform2DCreate((Transform2DValue){

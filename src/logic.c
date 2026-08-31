@@ -4,19 +4,30 @@
 #include "include/GameLoop.h"
 
 void UpdateGameState(GameState* state) {
-    WalahiState* w = &state->walahi;
 
-    Vector2 mouse = GetMousePosition();
-    if (mouse.x != w->transform_2d.x.target_val || mouse.y != w->transform_2d.y.target_val) {
-        Transform2DTo(&w->transform_2d, (Transform2DValue){
-                .x = mouse.x,
-                .y = mouse.y,
-                .rotation = 0.0f,
-                .scale = 1.0f,
-        }, 0.2f);
+    switch (state->current_page) {
+        case SAY_WALAHI:
+                WalahiState* w = &state->walahi;
+
+                Vector2 mouse = GetMousePosition();
+                if (mouse.x != w->transform_2d.x.target_val || mouse.y != w->transform_2d.y.target_val) {
+                    Transform2DTo(&w->transform_2d, (Transform2DValue){
+                            .x = mouse.x,
+                            .y = mouse.y,
+                            .rotation = 0.0f,
+                            .scale = 1.0f,
+                    }, 0.2f);
+                }
+                Transform2DStep(&w->transform_2d);
+            break;
+        case HOME:
+            break;
+        case ARENA:
+            Transform1DStep(&state->player1.hit_x);
+            Transform1DStep(&state->player2.hit_x);
+            break;
     }
 
-    Transform2DStep(&w->transform_2d);
 }
 
 static void update_player_physics(PlayerState* player, float move_input, bool jump_input, float dt) {
@@ -27,7 +38,7 @@ static void update_player_physics(PlayerState* player, float move_input, bool ju
     const float JUMP_FORCE    = -800.0f; // Initial upward velocity burst
 
     float screen_height = (float)GetScreenHeight();
-    float floor_y = screen_height - player->size.y;
+    float floor_y = screen_height - player->height;
 
     if (move_input != 0.0f) {
         bool move_negative = move_input < 0.0;
@@ -73,6 +84,17 @@ static void update_player_physics(PlayerState* player, float move_input, bool ju
         } else {
             player->fliped = false;
         }
+    }
+
+    if (IsKeyPressed(KEY_E)) {
+        float ratio = (float)player->texture.width / (float)player->texture.height;
+        float width = player->height * ratio;
+
+        float start_offset  = player->fliped ? (-player->attack.width) : (width);
+        float target_offset = player->fliped ? (-player->attack.width - 20.0f) : (width + 20.0f);
+
+        player->hit_x = Transform1DCreate(start_offset);
+        Transform1DTo(&player->hit_x, target_offset, 0.1f);
     }
 }
 

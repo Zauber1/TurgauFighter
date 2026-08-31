@@ -34,44 +34,48 @@ void draw_home(GameState* state, float subtick_alpha) {
 
 }
 
-void draw_arena(GameState* state, float subtick_alpha) {
-    PlayerState* player1 = &state->player1;
-    PlayerState* player2 = &state->player2;
-
-    bool flip_player1 = player1->velocity.x < 0.0;
-    bool flip_player2 = player2->velocity.x < 0.0;
+void DrawPlayer(PlayerState* player, float subtick_alpha) {
+    float ratio = (float)player->texture.width / (float)player->texture.height;
 
     Rectangle src1 = {
         .x = 0.0f,
         .y = 0.0f,
-        .width = (float)player1->texture.width * (player1->fliped ? -1.0 : 1.0),
-        .height = (float)player1->texture.height
+        .width = (float)player->texture.width * (player->fliped ? -1.0 : 1.0),
+        .height = (float)player->texture.height,
     };
     Rectangle dest1 = {
-        .x = player1->pos.x,
-        .y = player1->pos.y,
-        .width = player1->size.x,
-        .height = player1->size.y
+        .x = player->pos.x,
+        .y = player->pos.y,
+        .width = player->height * ratio,
+        .height = player->height,
     };
     Vector2 origin1 = { 0.0f, 0.0f };
 
-    DrawTexturePro(player1->texture, src1, dest1, origin1, 0.0f, RED);
+    if (player->hit_x.is_active) {
 
-    Rectangle src2 = {
-        .x = 0.0f,
-        .y = 0.0f,
-        .width = (float)player2->texture.width * (player2->fliped ? -1.0 : 1.0),
-        .height = (float)player2->texture.height
-    };
-    Rectangle dest2 = {
-        .x = player2->pos.x,
-        .y = player2->pos.y,
-        .width = player2->size.x,
-        .height = player2->size.y
-    };
-    Vector2 origin2 = { 0.0f, 0.0f };
+        Rectangle src2 = {
+            .x = 0.0,
+            .y = 0.0,
+            .width = player->attack.width * (player->fliped ? 1.0 : -1.0),
+            .height = player->attack.height,
+        };
 
-    DrawTexturePro(player2->texture, src2, dest2, origin2, 0.0f, WHITE);
+        Rectangle dest2 = {
+            .x = player->pos.x + Transform1DValueAt(&player->hit_x, subtick_alpha),
+            .y = player->pos.y,
+            .width = player->attack.width,
+            .height = player->height,
+        };
+
+        DrawTexturePro(player->attack, src2, dest2, origin1, 0.0, WHITE);
+    }
+
+    DrawTexturePro(player->texture, src1, dest1, origin1, 0.0f, WHITE);
+}
+
+void draw_arena(GameState* state, float subtick_alpha) {
+    DrawPlayer(&state->player1, subtick_alpha);
+    DrawPlayer(&state->player2, subtick_alpha);
 }
 
 void DrawGame(GameState* state, float subtick_alpha) {
