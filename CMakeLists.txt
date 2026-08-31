@@ -16,6 +16,8 @@ add_executable(TurgauFighter
         src/GameLoop.c
         src/Windows.c
         src/include/Windows.h
+        src/CursorControls.c
+        src/include/CursorControls.h
 
 )
 
