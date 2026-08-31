@@ -34,14 +34,13 @@ void draw_walahi(GameState* state, float subtick_alpha) {
 
 void draw_home(GameState* state, float subtick_alpha) {
     Rectangle button1 = (Rectangle){10,10,100,30};
-    BeginDrawing();
     DrawRectangle(button1.x,button1.y,button1.width,button1.height,RAYWHITE);
     ClearBackground(BLACK);
-    EndDrawing();
+
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         switch (checkMouseClick(1,GetMousePosition(),button1)) {
             case 0:
-                printf(("fuck u"));
+                state->current_page=SAY_WALAHI;
                 break;
             default:
                 printf("NEOEEEEEEE");
@@ -56,12 +55,11 @@ void draw_arena(GameState* state, float subtick_alpha) {
 }
 
 void DrawGame(GameState* state, float subtick_alpha) {
-    PAGE current_page = SAY_WALAHI;
 
     BeginDrawing();
     ClearBackground(WALAHI_COLOUR);
 
-    switch (current_page) {
+    switch (state->current_page) {
         case SAY_WALAHI:
             draw_walahi(state, subtick_alpha);
             break;

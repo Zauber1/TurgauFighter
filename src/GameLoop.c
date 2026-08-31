@@ -12,7 +12,7 @@ void GameLoop() {
     float accumulator = 0.0f;
 
     GameState state = {
-        .current_page = SAY_WALAHI,
+        .current_page = HOME,
         .tick = 0,
         .walahi = {
             .transform_2d = Transform2DCreate((Transform2DValue){
