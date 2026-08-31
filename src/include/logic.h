@@ -21,14 +21,19 @@ typedef struct WalahiState {
 
 #define TICKS_PER_SEC 60
 
-void StartMove(WalahiState* walahi, Vector2 new_destination, float duration_seconds);
+typedef struct PlayerState {
+    Vector2 pos;
+} PlayerState;
 
 typedef struct GameState {
     PAGE current_page;
     uint32_t tick;
     WalahiState walahi;
+    PlayerState player1;
+    PlayerState player2;
     float run_time;
 } GameState;
 
 void UpdateGameState(GameState* state);
+void updateGameStateSubTick(GameState* state, float subtick_alpha);
 #endif //TURGAUFIGHTER_LOGIC_H

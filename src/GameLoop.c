@@ -14,6 +14,18 @@ void GameLoop() {
     GameState state = {
         .current_page = SAY_WALAHI,
         .tick = 0,
+        .player1 = {
+            .pos = {
+                .x = 0,
+                .y = 0,
+            },
+        },
+        .player2 = {
+            .pos = {
+                .x = 0,
+                .y = 0,
+            },
+        },
         .walahi = {
             .transform_2d = Transform2DCreate((Transform2DValue){
                 .x = 0.0f,
