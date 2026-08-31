@@ -30,7 +30,7 @@ void UpdateGameState(GameState* state) {
 
 }
 
-static void update_player_physics(PlayerState* player, float move_input, bool jump_input, float dt) {
+static void update_player_physics(PlayerState* player, float move_input, bool jump_input, bool attack_input, float dt) {
     const float ACCELERATION  = 3500.0f; // px/s^2
     const float MAX_SPEED     = 600.0f;  // px/s
     const float FRICTION      = 12.0f;   // Drag coefficient
@@ -86,7 +86,7 @@ static void update_player_physics(PlayerState* player, float move_input, bool ju
         }
     }
 
-    if (IsKeyPressed(KEY_E)) {
+    if (attack_input) {
         float ratio = (float)player->texture.width / (float)player->texture.height;
         float width = player->height * ratio;
 
@@ -104,13 +104,15 @@ void update_arena_subtick(GameState* state, float dt) {
 
     // (-1.0 to 1.0)
     float p1_move = (float)IsKeyDown(KEY_D) - (float)IsKeyDown(KEY_A);
-    bool p1_jump = IsKeyPressed(KEY_W) || IsKeyPressed(KEY_SPACE);
+    bool p1_jump = IsKeyDown(KEY_W);
+    bool p1_attack = IsKeyPressed(KEY_E);
 
-    float p2_move = (float)IsKeyDown(KEY_RIGHT) - (float)IsKeyDown(KEY_LEFT);
-    bool p2_jump = IsKeyPressed(KEY_UP);
+    float p2_move = (float)IsKeyDown(KEY_L) - (float)IsKeyDown(KEY_J);
+    bool p2_jump = IsKeyDown(KEY_I);
+    bool p2_attack = IsKeyPressed(KEY_O);
 
-    update_player_physics(player1, p1_move, p1_jump, dt);
-    update_player_physics(player2, p2_move, p2_jump, dt);
+    update_player_physics(player1, p1_move, p1_jump, p1_attack, dt);
+    update_player_physics(player2, p2_move, p2_jump, p2_attack, dt);
 }
 
 void updateGameStateSubTick(GameState* state, float dt) {

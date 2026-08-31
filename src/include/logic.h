@@ -29,6 +29,7 @@ typedef struct PlayerState {
     bool fliped;
     Transform1D hit_x;
     Texture2D attack;
+    int healt;
 } PlayerState;
 
 typedef struct GameState {

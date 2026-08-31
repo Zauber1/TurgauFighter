@@ -30,6 +30,7 @@ void GameLoop() {
             .fliped = false,
             .hit_x = Transform1DCreate(0.0),
             .attack = attack,
+            .healt = 100,
         },
         .player2 = {
             .pos = {
@@ -45,6 +46,7 @@ void GameLoop() {
             .fliped = false,
             .hit_x = Transform1DCreate(0.0),
             .attack = attack,
+            .healt = 100,
         },
         .walahi = {
             .transform_2d = Transform2DCreate((Transform2DValue){
