@@ -5,8 +5,12 @@
 #include "include/GameLoop.h"
 #include "include/Windows.h"
 #include "include/logic.h"
+#include "MonkeySpriteSheetDefinitionWriter.h"
 
 void GameLoop() {
+
+    runWriter(817, 763, 900, 0, 62);
+
     init_assets();
 
     float accumulator = 0.0f;
