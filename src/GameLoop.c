@@ -5,11 +5,17 @@
 #include "include/GameLoop.h"
 #include "include/Windows.h"
 #include "include/logic.h"
+#include "MonkeySpriteSheetDefinitionWriter.h"
 
 void GameLoop() {
+
+    runWriter(817, 763, 900, 0, 62);
+
     init_assets();
 
     float accumulator = 0.0f;
+
+    Texture2D attack = LoadTexture("../assets/damage.png");
 
     GameState state = {
         .current_page = HOME,
@@ -19,12 +25,32 @@ void GameLoop() {
                 .x = 0,
                 .y = 0,
             },
+            .height = 100,
+            .velocity = {
+                .x = 0,
+                .y = 0,
+            },
+            .texture = LoadTexture("../assets/ferris_knife.png"),
+            .fliped = false,
+            .hit_x = Transform1DCreate(0.0),
+            .attack = attack,
+            .healt = 100,
         },
         .player2 = {
             .pos = {
                 .x = 0,
                 .y = 0,
             },
+            .height = 100,
+            .velocity = {
+                .x = 0,
+                .y = 0,
+            },
+            .texture = LoadTexture("../assets/ferris.png"),
+            .fliped = false,
+            .hit_x = Transform1DCreate(0.0),
+            .attack = attack,
+            .healt = 100,
         },
         .walahi = {
             .transform_2d = Transform2DCreate((Transform2DValue){
@@ -52,6 +78,7 @@ void GameLoop() {
 
         float subtick_alpha = accumulator / dELTAtIME;
 
+        updateGameStateSubTick(&state, dt);
         DrawGame(&state, subtick_alpha);
     }
 }

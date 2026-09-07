@@ -50,8 +50,48 @@ void draw_home(GameState* state, float subtick_alpha) {
 
 }
 
-void draw_arena(GameState* state, float subtick_alpha) {
+void DrawPlayer(PlayerState* player, float subtick_alpha) {
+    float ratio = (float)player->texture.width / (float)player->texture.height;
 
+    Rectangle src1 = {
+        .x = 0.0f,
+        .y = 0.0f,
+        .width = (float)player->texture.width * (player->fliped ? -1.0 : 1.0),
+        .height = (float)player->texture.height,
+    };
+    Rectangle dest1 = {
+        .x = player->pos.x,
+        .y = player->pos.y,
+        .width = player->height * ratio,
+        .height = player->height,
+    };
+    Vector2 origin1 = { 0.0f, 0.0f };
+
+    if (player->hit_x.is_active) {
+
+        Rectangle src2 = {
+            .x = 0.0,
+            .y = 0.0,
+            .width = player->attack.width * (player->fliped ? 1.0 : -1.0),
+            .height = player->attack.height,
+        };
+
+        Rectangle dest2 = {
+            .x = player->pos.x + Transform1DValueAt(&player->hit_x, subtick_alpha),
+            .y = player->pos.y,
+            .width = player->attack.width,
+            .height = player->height,
+        };
+
+        DrawTexturePro(player->attack, src2, dest2, origin1, 0.0, WHITE);
+    }
+
+    DrawTexturePro(player->texture, src1, dest1, origin1, 0.0f, WHITE);
+}
+
+void draw_arena(GameState* state, float subtick_alpha) {
+    DrawPlayer(&state->player1, subtick_alpha);
+    DrawPlayer(&state->player2, subtick_alpha);
 }
 
 void DrawGame(GameState* state, float subtick_alpha) {
