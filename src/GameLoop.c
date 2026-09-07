@@ -5,7 +5,7 @@
 #include "include/GameLoop.h"
 #include "include/Windows.h"
 #include "include/logic.h"
-#include "MonkeySpriteSheetDefinitionWriter.h"
+#include "include/MonkeySpriteSheetDefinitionWriter.h"
 
 void GameLoop() {
 
