@@ -19,6 +19,8 @@ add_executable(TurgauFighter
         src/include/logic.h
         src/transform.c
         src/include/transform.h
+        src/MonkeySpriteSheetDefinitionWriter.c
+        src/MonkeySpriteSheetDefinitionWriter.h
 )
 
 # Link against the target 'raylib' target built from the subdirectory
