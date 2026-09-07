@@ -15,20 +15,42 @@ void GameLoop() {
 
     float accumulator = 0.0f;
 
+    Texture2D attack = LoadTexture("../assets/damage.png");
+
     GameState state = {
-        .current_page = SAY_WALAHI,
+        .current_page = ARENA,
         .tick = 0,
         .player1 = {
             .pos = {
                 .x = 0,
                 .y = 0,
             },
+            .height = 100,
+            .velocity = {
+                .x = 0,
+                .y = 0,
+            },
+            .texture = LoadTexture("../assets/ferris_knife.png"),
+            .fliped = false,
+            .hit_x = Transform1DCreate(0.0),
+            .attack = attack,
+            .healt = 100,
         },
         .player2 = {
             .pos = {
                 .x = 0,
                 .y = 0,
             },
+            .height = 100,
+            .velocity = {
+                .x = 0,
+                .y = 0,
+            },
+            .texture = LoadTexture("../assets/ferris.png"),
+            .fliped = false,
+            .hit_x = Transform1DCreate(0.0),
+            .attack = attack,
+            .healt = 100,
         },
         .walahi = {
             .transform_2d = Transform2DCreate((Transform2DValue){
@@ -55,7 +77,8 @@ void GameLoop() {
         }
 
         float subtick_alpha = accumulator / dELTAtIME;
-        updateGameStateSubTick(&state, subtick_alpha);
+
+        updateGameStateSubTick(&state, dt);
         DrawGame(&state, subtick_alpha);
     }
 }
