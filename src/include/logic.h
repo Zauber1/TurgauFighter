@@ -32,6 +32,11 @@ typedef struct PlayerState {
     int healt;
 } PlayerState;
 
+typedef struct Buttons {
+    int num;
+    Rectangle* rect;
+} Buttons;
+
 typedef struct GameState {
     PAGE current_page;
     uint32_t tick;
@@ -39,6 +44,7 @@ typedef struct GameState {
     PlayerState player1;
     PlayerState player2;
     float run_time;
+    Buttons buttons;
 } GameState;
 
 void UpdateGameState(GameState* state);

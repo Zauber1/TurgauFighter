@@ -14,7 +14,7 @@ void GameLoop() {
     init_assets();
 
     float accumulator = 0.0f;
-
+    Rectangle rect[3];
     Texture2D attack = LoadTexture("../assets/damage.png");
 
     GameState state = {
@@ -61,6 +61,10 @@ void GameLoop() {
             }),
         },
         .run_time = 0.0f,
+        .buttons = {
+        .num = 3,
+        .rect = rect,
+        }
     };
 
     while (!WindowShouldClose()) {
