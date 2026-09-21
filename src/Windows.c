@@ -1,6 +1,8 @@
 #define WALAHI_COLOUR CLITERAL(Color){ 0, 0, 0, 255 }
 #include <stdint.h>
 
+#include <stdio.h>
+#include "include/ButtonControls.h"
 
 
 #include "include/Windows.h"
@@ -31,6 +33,20 @@ void draw_walahi(GameState* state, float subtick_alpha) {
 }
 
 void draw_home(GameState* state, float subtick_alpha) {
+    Rectangle button1 = (Rectangle){10,10,100,30};
+    DrawRectangle(button1.x,button1.y,button1.width,button1.height,RAYWHITE);
+    ClearBackground(BLACK);
+
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        switch (checkMouseClick(1,GetMousePosition(),button1)) {
+            case 0:
+                state->current_page=SAY_WALAHI;
+                break;
+            default:
+                printf("NEOEEEEEEE");
+                break;
+        }
+    }
 
 }
 
@@ -79,6 +95,7 @@ void draw_arena(GameState* state, float subtick_alpha) {
 }
 
 void DrawGame(GameState* state, float subtick_alpha) {
+
     BeginDrawing();
     ClearBackground(WALAHI_COLOUR);
 
@@ -96,4 +113,5 @@ void DrawGame(GameState* state, float subtick_alpha) {
 
     EndDrawing();
 }
+
 

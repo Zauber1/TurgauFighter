@@ -15,12 +15,15 @@ add_executable(TurgauFighter
         src/GameLoop.c
         src/Windows.c
         src/include/Windows.h
+        src/include/ButtonControls.h
+        src/ButtonControls.c
+
         src/logic.c
         src/include/logic.h
         src/transform.c
         src/include/transform.h
         src/MonkeySpriteSheetDefinitionWriter.c
-        src/MonkeySpriteSheetDefinitionWriter.h
+        src/include/MonkeySpriteSheetDefinitionWriter.h
 )
 
 # Link against the target 'raylib' target built from the subdirectory

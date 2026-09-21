@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "MonkeySpriteSheetDefinitionWriter.h"
+#include "include/MonkeySpriteSheetDefinitionWriter.h"
 
 void runWriter(int max_y, int min_y, int max_x, int min_x, int x_distance_between_pictures) {
     printf("[DEBUG] runWriter called with parameters:\n");

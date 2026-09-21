@@ -5,7 +5,7 @@
 #include "include/GameLoop.h"
 #include "include/Windows.h"
 #include "include/logic.h"
-#include "MonkeySpriteSheetDefinitionWriter.h"
+#include "include/MonkeySpriteSheetDefinitionWriter.h"
 
 void GameLoop() {
 
@@ -18,7 +18,7 @@ void GameLoop() {
     Texture2D attack = LoadTexture("../assets/damage.png");
 
     GameState state = {
-        .current_page = ARENA,
+        .current_page = HOME,
         .tick = 0,
         .player1 = {
             .pos = {
