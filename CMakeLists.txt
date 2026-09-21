@@ -24,6 +24,8 @@ add_executable(TurgauFighter
         src/include/transform.h
         src/MonkeySpriteSheetDefinitionWriter.c
         src/include/MonkeySpriteSheetDefinitionWriter.h
+        src/MusicController.c
+        src/include/MusicController.h
 )
 
 # Link against the target 'raylib' target built from the subdirectory
