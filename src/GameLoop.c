@@ -7,6 +7,10 @@
 #include "include/logic.h"
 #include "include/MonkeySpriteSheetDefinitionWriter.h"
 
+void onPageChange(PAGE old, PAGE new) {
+
+}
+
 void GameLoop() {
 
     runWriter(817, 763, 900, 0, 62);
@@ -67,7 +71,14 @@ void GameLoop() {
         }
     };
 
+    PAGE current_page = state.current_page;
+
     while (!WindowShouldClose()) {
+        if (current_page != state.current_page) {
+            onPageChange(current_page, state.current_page);
+            current_page = state.current_page;
+        }
+
         float dt = GetFrameTime();
         if (dt > 0.25f) { dt = 0.25f; }
 
