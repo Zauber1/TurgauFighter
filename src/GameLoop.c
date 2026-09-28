@@ -63,7 +63,7 @@ void GameLoop() {
         .run_time = 0.0f,
         .buttons = {
         .num = 3,
-        .rect = rect,
+        .button = NULL,
         }
     };
 

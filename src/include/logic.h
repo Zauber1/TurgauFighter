@@ -32,9 +32,14 @@ typedef struct PlayerState {
     int healt;
 } PlayerState;
 
+typedef struct Button {
+    Rectangle rect;
+    char* text;
+} Button;
+
 typedef struct Buttons {
     int num;
-    Rectangle* rect;
+    Button *button;
 } Buttons;
 
 typedef struct GameState {
@@ -45,7 +50,7 @@ typedef struct GameState {
     PlayerState player2;
     float run_time;
     Buttons buttons;
-} GameState;
+}GameState;
 
 void UpdateGameState(GameState* state);
 void updateGameStateSubTick(GameState* state, float subtick_alpha);

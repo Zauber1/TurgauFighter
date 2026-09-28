@@ -33,10 +33,12 @@ void draw_walahi(GameState* state, float subtick_alpha) {
 }
 
 void draw_home(GameState* state, float subtick_alpha) {
-    Rectangle button1 = state->buttons.rect[0];
+    Rectangle button1 = state->buttons.button[0].rect;
     DrawRectangle(button1.x,button1.y,button1.width,button1.height,RAYWHITE);
-    Rectangle button2 = state->buttons.rect[1];
+    DrawText(state->buttons.button[0].text,button1.x,button1.y,10,BLACK);
+    Rectangle button2 = state->buttons.button[1].rect;
     DrawRectangle(button2.x,button2.y,button2.width,button2.height,RAYWHITE);
+    DrawText(state->buttons.button[1].text,button2.x,button2.y,10,BLACK);
     ClearBackground(BLACK);
 
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
@@ -108,8 +110,8 @@ void DrawGame(GameState* state, float subtick_alpha) {
             draw_walahi(state, subtick_alpha);
             break;
         case HOME:
-            state->buttons.rect[0] = (Rectangle){10,10,100,20};
-            state->buttons.rect[1] = (Rectangle){10,40,100,20};
+            state->buttons.button[0] = (Button){(Rectangle){10,10,100,20},"Button"};
+            state->buttons.button[0] = (Button){(Rectangle){10,50,100,20},"Button2"};
             draw_home(state, subtick_alpha);
             break;
         case ARENA:
