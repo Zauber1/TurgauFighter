@@ -2,6 +2,7 @@
 
 #include "raylib.h"
 
+#include "include/init.h"
 #include "include/GameLoop.h"
 #include "include/Windows.h"
 #include "include/logic.h"
@@ -18,43 +19,47 @@ void GameLoop() {
     init_assets();
 
     float accumulator = 0.0f;
-    Rectangle rect[3];
-    Texture2D attack = LoadTexture("../assets/damage.png");
+    Rectangle rect[3] = {
+        { 260, 270, 280, 56 },
+        { 260, 345, 280, 56 },
+        { 0, 0, 0, 0 }
+    };
+    Texture2D attack = LoadGameTexture("damage.png");
 
     GameState state = {
         .current_page = HOME,
         .tick = 0,
         .player1 = {
             .pos = {
-                .x = 0,
-                .y = 0,
+                .x = 120,
+                .y = STAGE_FLOOR_Y - 100.0f,
             },
             .height = 100,
             .velocity = {
                 .x = 0,
                 .y = 0,
             },
-            .texture = LoadTexture("../assets/ferris_knife.png"),
+            .texture = LoadGameTexture("ferris_knife.png"),
             .fliped = false,
-            .hit_x = Transform1DCreate(0.0),
+            .hit_x = Transform1DCreate(0.0f),
             .attack = attack,
-            .healt = 100,
+            .healt = MAX_HEALTH,
         },
         .player2 = {
             .pos = {
-                .x = 0,
-                .y = 0,
+                .x = 550,
+                .y = STAGE_FLOOR_Y - 100.0f,
             },
             .height = 100,
             .velocity = {
                 .x = 0,
                 .y = 0,
             },
-            .texture = LoadTexture("../assets/ferris.png"),
-            .fliped = false,
-            .hit_x = Transform1DCreate(0.0),
+            .texture = LoadGameTexture("ferris.png"),
+            .fliped = true,
+            .hit_x = Transform1DCreate(0.0f),
             .attack = attack,
-            .healt = 100,
+            .healt = MAX_HEALTH,
         },
         .walahi = {
             .transform_2d = Transform2DCreate((Transform2DValue){
@@ -66,9 +71,13 @@ void GameLoop() {
         },
         .run_time = 0.0f,
         .buttons = {
-        .num = 3,
-        .rect = rect,
-        }
+            .num = 3,
+            .rect = rect,
+        },
+        .p1_wins = 0,
+        .p2_wins = 0,
+        .winner = 0,
+        .win_screen_timer = 0.0f,
     };
 
     PAGE current_page = state.current_page;

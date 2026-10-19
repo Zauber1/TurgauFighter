@@ -2,6 +2,7 @@
 #include "include/ButtonControls.h"
 
 #include <stdio.h>
+#include <stdarg.h>
 
 #include "raylib.h"
 int checkMouseClick(int count ,Vector2 cur ,  ... ) {
@@ -14,6 +15,7 @@ int checkMouseClick(int count ,Vector2 cur ,  ... ) {
             return i;
         }
     }
+    va_end(va);
     return -1;
 }
 

@@ -13,6 +13,7 @@ typedef enum PAGE {
     SAY_WALAHI,
     HOME,
     ARENA,
+    WIN_SCREEN,
 } PAGE;
 
 typedef struct WalahiState {
@@ -20,6 +21,8 @@ typedef struct WalahiState {
 } WalahiState;
 
 #define TICKS_PER_SEC 60
+#define MAX_HEALTH 100
+#define STAGE_FLOOR_Y 640.0f
 
 typedef struct PlayerState {
     Vector2 pos;
@@ -45,8 +48,13 @@ typedef struct GameState {
     PlayerState player2;
     float run_time;
     Buttons buttons;
+    int p1_wins;
+    int p2_wins;
+    int winner; // 1 = player 1, 2 = player 2
+    float win_screen_timer;
 } GameState;
 
 void UpdateGameState(GameState* state);
 void updateGameStateSubTick(GameState* state, float subtick_alpha);
+void reset_round(GameState* state);
 #endif //TURGAUFIGHTER_LOGIC_H

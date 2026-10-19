@@ -6,7 +6,10 @@ void runWriter(int max_y, int min_y, int max_x, int min_x, int x_distance_betwee
     printf("        min_x: %d, max_x: %d, step: %d\n", min_x, max_x, x_distance_between_pictures);
     printf("        min_y: %d, max_y: %d\n", min_y, max_y);
 
-    FILE *csvFile = fopen("../src/MonkeySpriteSheetDefinition.csv", "w");
+    FILE *csvFile = fopen("src/MonkeySpriteSheetDefinition.csv", "w");
+    if (csvFile == NULL) {
+        csvFile = fopen("../src/MonkeySpriteSheetDefinition.csv", "w");
+    }
 
     if (csvFile == NULL) {
         perror("[DEBUG ERROR] Failed to open MonkeySpriteSheetDefinition.csv");
