@@ -7,6 +7,7 @@
 #include "include/Windows.h"
 #include "include/logic.h"
 #include "include/MonkeySpriteSheetDefinitionWriter.h"
+#include "include/shaders.h"
 
 void onPageChange(PAGE old, PAGE new) {
 
@@ -17,11 +18,13 @@ void GameLoop() {
     runWriter(817, 763, 900, 0, 62);
 
     init_assets();
+    InitShaders();
 
     float accumulator = 0.0f;
-    Rectangle rect[3] = {
-        { 260, 270, 280, 56 },
-        { 260, 345, 280, 56 },
+    Rectangle rect[4] = {
+        { 260, 240, 280, 52 },
+        { 260, 310, 280, 52 },
+        { 260, 380, 280, 52 },
         { 0, 0, 0, 0 }
     };
     Texture2D attack = LoadGameTexture("damage.png");
@@ -44,6 +47,8 @@ void GameLoop() {
             .hit_x = Transform1DCreate(0.0f),
             .attack = attack,
             .healt = MAX_HEALTH,
+            .shader_id = SHADER_NONE,
+            .owned_shaders = { true, false, false, false, false, false },
         },
         .player2 = {
             .pos = {
@@ -60,6 +65,8 @@ void GameLoop() {
             .hit_x = Transform1DCreate(0.0f),
             .attack = attack,
             .healt = MAX_HEALTH,
+            .shader_id = SHADER_NONE,
+            .owned_shaders = { true, false, false, false, false, false },
         },
         .walahi = {
             .transform_2d = Transform2DCreate((Transform2DValue){
@@ -79,6 +86,8 @@ void GameLoop() {
         .winner = 0,
         .win_screen_timer = 0.0f,
     };
+
+    init_gambling_reel(&state);
 
     PAGE current_page = state.current_page;
 
@@ -105,4 +114,6 @@ void GameLoop() {
         updateGameStateSubTick(&state, dt);
         DrawGame(&state, subtick_alpha);
     }
+
+    UnloadAllShaders();
 }

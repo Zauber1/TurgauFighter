@@ -1,6 +1,8 @@
 #include "include/logic.h"
+#include "include/shaders.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 
 #include "raymath.h"
@@ -43,6 +45,7 @@ void UpdateGameState(GameState* state) {
             break;
         }
         case HOME:
+        case GAMBLING:
             break;
         case ARENA:
         case WIN_SCREEN:
@@ -204,5 +207,86 @@ void updateGameStateSubTick(GameState* state, float dt) {
                 state->current_page = HOME;
             }
             break;
+        case GAMBLING:
+            update_gambling_subtick(state, dt);
+            break;
+    }
+}
+
+void init_gambling_reel(GameState* state) {
+    state->gambling.is_spinning = false;
+    state->gambling.spin_timer = 0.0f;
+    state->gambling.spin_duration = 5.0f;
+    state->gambling.reel_pos = 0.0f;
+    state->gambling.target_pos = 0.0f;
+    state->gambling.winning_shader = 0;
+    state->gambling.winning_item_index = 0;
+    state->gambling.last_click_index = -1;
+    state->gambling.has_won = false;
+
+    // Fill reel items with shaders (weighted distribution for excitement)
+    // 1: Glint (common/restricted), 2: Mandelbrot, 3: Holo, 4: Gold (rare!), 5: Fire
+    for (int i = 0; i < 64; i++) {
+        int r = rand() % 100;
+        if (r < 25) {
+            state->gambling.reel_items[i] = SHADER_GLINT;
+        } else if (r < 50) {
+            state->gambling.reel_items[i] = SHADER_HOLO;
+        } else if (r < 75) {
+            state->gambling.reel_items[i] = SHADER_MANDELBROT;
+        } else if (r < 90) {
+            state->gambling.reel_items[i] = SHADER_FIRE;
+        } else {
+            state->gambling.reel_items[i] = SHADER_GOLD; // Ultra rare gold!
+        }
+    }
+}
+
+void start_gambling_spin(GameState* state) {
+    if (state->gambling.is_spinning) return;
+
+    // Pick a winning index between 35 and 48
+    int win_idx = 35 + (rand() % 14);
+    state->gambling.winning_item_index = win_idx;
+    state->gambling.winning_shader = state->gambling.reel_items[win_idx];
+
+    // Card width is 130 + 10 margin = 140 step
+    // Subtle jitter within the center of the card (-30 to +30 px)
+    float jitter = (float)((rand() % 61) - 30);
+    state->gambling.target_pos = (float)win_idx * 140.0f + jitter;
+
+    state->gambling.is_spinning = true;
+    state->gambling.spin_timer = 0.0f;
+    state->gambling.spin_duration = 5.0f;
+    state->gambling.reel_pos = 0.0f;
+    state->gambling.last_click_index = -1;
+    state->gambling.has_won = false;
+}
+
+void update_gambling_subtick(GameState* state, float dt) {
+    if (state->gambling.is_spinning) {
+        state->gambling.spin_timer += dt;
+        float t = state->gambling.spin_timer / state->gambling.spin_duration;
+        if (t >= 1.0f) {
+            t = 1.0f;
+            state->gambling.is_spinning = false;
+            state->gambling.has_won = true;
+            state->gambling.reel_pos = state->gambling.target_pos;
+        } else {
+            // Quartic ease-out: rapid spin with gradual, suspenseful slowdown
+            float ease = 1.0f - powf(1.0f - t, 4.0f);
+            state->gambling.reel_pos = state->gambling.target_pos * ease;
+        }
+
+        // Trigger click sound when an item passes the center marker (needle)
+        int current_idx = (int)((state->gambling.reel_pos + 70.0f) / 140.0f);
+        if (current_idx != state->gambling.last_click_index && current_idx >= 0) {
+            state->gambling.last_click_index = current_idx;
+            PlayReelClickSound();
+        }
+    }
+
+    if (IsKeyPressed(KEY_ESCAPE)) {
+        state->current_page = HOME;
     }
 }

@@ -14,6 +14,7 @@ typedef enum PAGE {
     HOME,
     ARENA,
     WIN_SCREEN,
+    GAMBLING,
 } PAGE;
 
 typedef struct WalahiState {
@@ -33,12 +34,27 @@ typedef struct PlayerState {
     Transform1D hit_x;
     Texture2D attack;
     int healt;
+    int shader_id;
+    bool owned_shaders[6];
 } PlayerState;
 
 typedef struct Buttons {
     int num;
     Rectangle* rect;
 } Buttons;
+
+typedef struct GamblingState {
+    bool is_spinning;
+    float spin_timer;
+    float spin_duration;
+    float reel_pos;
+    float target_pos;
+    int winning_shader;
+    int winning_item_index;
+    int last_click_index;
+    bool has_won;
+    int reel_items[64];
+} GamblingState;
 
 typedef struct GameState {
     PAGE current_page;
@@ -52,9 +68,13 @@ typedef struct GameState {
     int p2_wins;
     int winner; // 1 = player 1, 2 = player 2
     float win_screen_timer;
+    GamblingState gambling;
 } GameState;
 
 void UpdateGameState(GameState* state);
 void updateGameStateSubTick(GameState* state, float subtick_alpha);
 void reset_round(GameState* state);
+void init_gambling_reel(GameState* state);
+void start_gambling_spin(GameState* state);
+void update_gambling_subtick(GameState* state, float dt);
 #endif //TURGAUFIGHTER_LOGIC_H

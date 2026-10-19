@@ -8,8 +8,10 @@
 #include "include/Windows.h"
 #include "include/logic.h"
 #include "include/init.h"
+#include "include/shaders.h"
 
 void draw_arena(GameState* state, float subtick_alpha);
+void draw_gambling(GameState* state, float subtick_alpha);
 
 Texture2D walahi_texture;
 
@@ -52,7 +54,7 @@ void draw_home(GameState* state, float subtick_alpha) {
 
     // Title with stylish shadow
     const char* title = "TURGAU FIGHTER";
-    int title_size = 54;
+    int title_size = 56;
     int title_w = MeasureText(title, title_size);
     int title_x = (screen_w - title_w) / 2;
     int title_y = 75;
@@ -64,84 +66,98 @@ void draw_home(GameState* state, float subtick_alpha) {
     int sub_w = MeasureText(subtitle, 18);
     DrawText(subtitle, (screen_w - sub_w) / 2, title_y + 65, 18, (Color){ 175, 185, 205, 255 });
 
-    // Character preview artwork
+    // Character preview artwork with equipped shaders
     if (state->player1.texture.id != 0) {
         float r1 = (float)state->player1.texture.width / (float)state->player1.texture.height;
+        if (state->player1.shader_id > 0) {
+            ApplyCrabShader(state->player1.shader_id, state->run_time);
+        }
         DrawTexturePro(state->player1.texture,
             (Rectangle){ 0.0f, 0.0f, (float)state->player1.texture.width, (float)state->player1.texture.height },
-            (Rectangle){ 50.0f, 210.0f, 130.0f * r1, 130.0f },
+            (Rectangle){ 55.0f, 230.0f, 135.0f * r1, 135.0f },
             (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
-        int p1_lbl_w = MeasureText("Rust Crab", 16);
-        DrawText("Rust Crab", 50 + (int)(130.0f * r1 - p1_lbl_w) / 2, 350, 16, (Color){ 100, 175, 255, 255 });
+        if (state->player1.shader_id > 0) {
+            EndCrabShader();
+        }
+        int p1_lbl_w = MeasureText("Rust Crab", 18);
+        DrawText("Rust Crab", 55 + (int)(135.0f * r1 - p1_lbl_w) / 2, 380, 18, (Color){ 100, 175, 255, 255 });
+        const char* s1_name = GetShaderName(state->player1.shader_id);
+        int s1_w = MeasureText(s1_name, 14);
+        DrawText(s1_name, 55 + (int)(135.0f * r1 - s1_w) / 2, 405, 14, GetShaderRarityColor(state->player1.shader_id));
     }
 
     if (state->player2.texture.id != 0) {
         float r2 = (float)state->player2.texture.width / (float)state->player2.texture.height;
-        float p2_drawn_w = 130.0f * r2;
+        float p2_drawn_w = 135.0f * r2;
+        if (state->player2.shader_id > 0) {
+            ApplyCrabShader(state->player2.shader_id, state->run_time);
+        }
         DrawTexturePro(state->player2.texture,
             (Rectangle){ 0.0f, 0.0f, -(float)state->player2.texture.width, (float)state->player2.texture.height },
-            (Rectangle){ (float)screen_w - 50.0f - p2_drawn_w, 210.0f, p2_drawn_w, 130.0f },
+            (Rectangle){ (float)screen_w - 55.0f - p2_drawn_w, 230.0f, p2_drawn_w, 135.0f },
             (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
-        int p2_lbl_w = MeasureText("C++ Crab", 16);
-        DrawText("C++ Crab", screen_w - 50 - (int)p2_drawn_w + (int)(p2_drawn_w - p2_lbl_w) / 2, 350, 16, (Color){ 255, 210, 65, 255 });
+        if (state->player2.shader_id > 0) {
+            EndCrabShader();
+        }
+        int p2_lbl_w = MeasureText("C++ Crab", 18);
+        DrawText("C++ Crab", screen_w - 55 - (int)p2_drawn_w + (int)(p2_drawn_w - p2_lbl_w) / 2, 380, 18, (Color){ 255, 210, 65, 255 });
+        const char* s2_name = GetShaderName(state->player2.shader_id);
+        int s2_w = MeasureText(s2_name, 14);
+        DrawText(s2_name, screen_w - 55 - (int)p2_drawn_w + (int)(p2_drawn_w - s2_w) / 2, 405, 14, GetShaderRarityColor(state->player2.shader_id));
     }
 
-    // Home buttons
+    // Home buttons: PLAY ARENA, OPEN CASES (GAMBLE), SAY WALAHI
     Rectangle btn_arena = state->buttons.rect[0];
-    Rectangle btn_walahi = state->buttons.rect[1];
+    Rectangle btn_gamble = state->buttons.rect[1];
+    Rectangle btn_walahi = state->buttons.rect[2];
 
     Vector2 mouse = GetMousePosition();
     bool hover1 = CheckCollisionPointRec(mouse, btn_arena);
-    bool hover2 = CheckCollisionPointRec(mouse, btn_walahi);
+    bool hover2 = CheckCollisionPointRec(mouse, btn_gamble);
+    bool hover3 = CheckCollisionPointRec(mouse, btn_walahi);
 
     // Button 1: PLAY ARENA
-    Color b1_bg = hover1 ? (Color){ 45, 95, 200, 255 } : (Color){ 28, 55, 125, 245 };
+    Color b1_bg = hover1 ? (Color){ 45, 95, 205, 255 } : (Color){ 28, 55, 125, 245 };
     Color b1_border = hover1 ? (Color){ 130, 195, 255, 255 } : (Color){ 65, 125, 230, 255 };
     DrawRectangleRounded(btn_arena, 0.25f, 4, b1_bg);
     DrawRectangleRoundedLinesEx(btn_arena, 0.25f, 4, 2, b1_border);
-
     const char* b1_text = "PLAY ARENA";
     int b1_w = MeasureText(b1_text, 22);
-    DrawText(b1_text, btn_arena.x + (btn_arena.width - b1_w) / 2, btn_arena.y + 17, 22, WHITE);
+    DrawText(b1_text, btn_arena.x + (btn_arena.width - b1_w) / 2, btn_arena.y + 15, 22, WHITE);
 
-    // Button 2: SAY WALAHI
-    Color b2_bg = hover2 ? (Color){ 175, 130, 20, 255 } : (Color){ 110, 80, 15, 245 };
-    Color b2_border = hover2 ? (Color){ 255, 225, 80, 255 } : (Color){ 210, 165, 35, 255 };
-    DrawRectangleRounded(btn_walahi, 0.25f, 4, b2_bg);
-    DrawRectangleRoundedLinesEx(btn_walahi, 0.25f, 4, 2, b2_border);
+    // Button 2: OPEN CASES (GAMBLE)
+    Color b2_bg = hover2 ? (Color){ 180, 45, 140, 255 } : (Color){ 115, 25, 90, 245 };
+    Color b2_border = hover2 ? (Color){ 255, 120, 215, 255 } : (Color){ 200, 55, 155, 255 };
+    DrawRectangleRounded(btn_gamble, 0.25f, 4, b2_bg);
+    DrawRectangleRoundedLinesEx(btn_gamble, 0.25f, 4, 2, b2_border);
+    const char* b2_text = "OPEN CASES (GAMBLE)";
+    int b2_w = MeasureText(b2_text, 20);
+    DrawText(b2_text, btn_gamble.x + (btn_gamble.width - b2_w) / 2, btn_gamble.y + 16, 20, WHITE);
 
-    const char* b2_text = "SAY WALAHI";
-    int b2_w = MeasureText(b2_text, 22);
-    DrawText(b2_text, btn_walahi.x + (btn_walahi.width - b2_w) / 2, btn_walahi.y + 17, 22, WHITE);
+    // Button 3: SAY WALAHI
+    Color b3_bg = hover3 ? (Color){ 175, 130, 20, 255 } : (Color){ 110, 80, 15, 245 };
+    Color b3_border = hover3 ? (Color){ 255, 225, 80, 255 } : (Color){ 210, 165, 35, 255 };
+    DrawRectangleRounded(btn_walahi, 0.25f, 4, b3_bg);
+    DrawRectangleRoundedLinesEx(btn_walahi, 0.25f, 4, 2, b3_border);
+    const char* b3_text = "SAY WALAHI";
+    int b3_w = MeasureText(b3_text, 22);
+    DrawText(b3_text, btn_walahi.x + (btn_walahi.width - b3_w) / 2, btn_walahi.y + 15, 22, WHITE);
 
-    // Controls explanation panel
-    Rectangle ctrl_panel = { (screen_w - 560) / 2, 455, 560, 255 };
-    DrawRectangleRounded(ctrl_panel, 0.12f, 4, (Color){ 24, 27, 38, 240 });
-    DrawRectangleRoundedLinesEx(ctrl_panel, 0.12f, 4, 1, (Color){ 55, 62, 85, 255 });
-
-    const char* ctrl_hdr = "CONTROLS & GUIDE";
-    int hdr_w = MeasureText(ctrl_hdr, 18);
-    DrawText(ctrl_hdr, ctrl_panel.x + (ctrl_panel.width - hdr_w) / 2, ctrl_panel.y + 16, 18, (Color){ 230, 235, 250, 255 });
-
-    DrawText("Rust Crab (Blue):", ctrl_panel.x + 35, ctrl_panel.y + 52, 16, (Color){ 100, 175, 255, 255 });
-    DrawText("[A] [D] Walk    [W] Jump    [E] Attack Knife", ctrl_panel.x + 55, ctrl_panel.y + 76, 15, WHITE);
-
-    DrawText("C++ Crab (Yellow):", ctrl_panel.x + 35, ctrl_panel.y + 112, 16, (Color){ 255, 210, 65, 255 });
-    DrawText("[J] [L] Walk    [I] Jump    [O] Attack C++ Strike", ctrl_panel.x + 55, ctrl_panel.y + 136, 15, WHITE);
-
-    DrawLine(ctrl_panel.x + 30, ctrl_panel.y + 175, ctrl_panel.x + ctrl_panel.width - 30, ctrl_panel.y + 175, (Color){ 50, 56, 75, 255 });
-    DrawText("Hit opponent to deplete HP! First to 0 loses the round.", ctrl_panel.x + 35, ctrl_panel.y + 190, 14, (Color){ 175, 185, 205, 255 });
-    DrawText("Round score counters at top center track wins (CS2 style)!", ctrl_panel.x + 35, ctrl_panel.y + 215, 14, (Color){ 175, 185, 205, 255 });
+    // Footer decoration
+    DrawText("Turgau Fighter v1.337", (screen_w - MeasureText("Turgau Fighter v1.337", 14)) / 2, screen_h - 45, 14, (Color){ 90, 95, 120, 200 });
 
     // Handle mouse click
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-        int clicked = checkMouseClick(2, mouse, btn_arena, btn_walahi);
+        int clicked = checkMouseClick(3, mouse, btn_arena, btn_gamble, btn_walahi);
         switch (clicked) {
             case 0:
                 reset_round(state);
                 state->current_page = ARENA;
                 break;
             case 1:
+                state->current_page = GAMBLING;
+                break;
+            case 2:
                 state->current_page = SAY_WALAHI;
                 break;
             default:
@@ -150,7 +166,7 @@ void draw_home(GameState* state, float subtick_alpha) {
     }
 }
 
-void DrawPlayer(PlayerState* player, float subtick_alpha) {
+void DrawPlayer(PlayerState* player, float subtick_alpha, float time) {
     float ratio = (player->texture.height > 0) ? ((float)player->texture.width / (float)player->texture.height) : 1.0f;
     float p_width = player->height * ratio;
 
@@ -188,7 +204,14 @@ void DrawPlayer(PlayerState* player, float subtick_alpha) {
     }
 
     if (player->texture.id != 0) {
+        // Apply player's equipped shader effect
+        if (player->shader_id > 0) {
+            ApplyCrabShader(player->shader_id, time);
+        }
         DrawTexturePro(player->texture, src1, dest1, origin1, 0.0f, WHITE);
+        if (player->shader_id > 0) {
+            EndCrabShader();
+        }
     } else {
         DrawRectangleRec(dest1, player->fliped ? RED : BLUE);
     }
@@ -204,7 +227,7 @@ void DrawCs2WinCounter(GameState* state) {
     // Dark sleek container backing
     DrawRectangleRounded((Rectangle){ center_x - 90, top_y - 4, 180, box_h + 8 }, 0.25f, 4, (Color){ 12, 14, 20, 220 });
 
-    // Player 1 (Blue / CT style) score box
+    // Blue / CT style score box
     Rectangle p1_box = { center_x - box_w - 16, top_y, box_w, box_h };
     DrawRectangleRounded(p1_box, 0.2f, 4, (Color){ 24, 76, 150, 240 });
     DrawRectangleRoundedLinesEx(p1_box, 0.2f, 4, 2, (Color){ 75, 145, 245, 255 });
@@ -221,7 +244,7 @@ void DrawCs2WinCounter(GameState* state) {
     int vs_w = MeasureText("VS", 14);
     DrawText("VS", center_badge.x + (26 - vs_w) / 2, center_badge.y + 9, 14, (Color){ 185, 190, 210, 255 });
 
-    // Player 2 (Yellow / T style) score box
+    // Yellow / T style score box
     Rectangle p2_box = { center_x + 16, top_y, box_w, box_h };
     DrawRectangleRounded(p2_box, 0.2f, 4, (Color){ 180, 135, 18, 240 });
     DrawRectangleRoundedLinesEx(p2_box, 0.2f, 4, 2, (Color){ 250, 200, 45, 255 });
@@ -303,7 +326,6 @@ void DrawHealthBars(GameState* state) {
 }
 
 void DrawWinScreen(GameState* state, float subtick_alpha) {
-    // Render the arena in the background
     draw_arena(state, subtick_alpha);
 
     int screen_w = GetScreenWidth();
@@ -372,9 +394,9 @@ void draw_arena(GameState* state, float subtick_alpha) {
     DrawLineEx((Vector2){ 0, STAGE_FLOOR_Y }, (Vector2){ (float)screen_w, STAGE_FLOOR_Y }, 4, (Color){ 75, 85, 115, 255 });
     DrawLineEx((Vector2){ 0, STAGE_FLOOR_Y + 4 }, (Vector2){ (float)screen_w, STAGE_FLOOR_Y + 4 }, 2, (Color){ 105, 120, 155, 140 });
 
-    // Draw the two fighters
-    DrawPlayer(&state->player1, subtick_alpha);
-    DrawPlayer(&state->player2, subtick_alpha);
+    // Draw the two fighters standing on the floor
+    DrawPlayer(&state->player1, subtick_alpha, state->run_time);
+    DrawPlayer(&state->player2, subtick_alpha, state->run_time);
 
     // CS2-style Win Counter (Top Center)
     DrawCs2WinCounter(state);
@@ -386,6 +408,325 @@ void draw_arena(GameState* state, float subtick_alpha) {
     DrawText("[ESC] Menu", 16, 16, 14, (Color){ 120, 130, 150, 180 });
 }
 
+void draw_gambling(GameState* state, float subtick_alpha) {
+    int screen_w = GetScreenWidth();
+    int screen_h = GetScreenHeight();
+
+    ClearBackground((Color){ 14, 16, 24, 255 });
+
+    // Apply horizontal sweeping holographic scan shader across screen
+    ApplyHorizontalScanShader(state->run_time);
+    DrawRectangle(0, 0, screen_w, screen_h, (Color){ 20, 24, 40, 130 });
+    EndHorizontalScanShader();
+
+    // Top Header
+    const char* hdr = "CASE OPENING & SHADER GAMBLE";
+    int hw = MeasureText(hdr, 28);
+    DrawText(hdr, (screen_w - hw) / 2, 20, 28, (Color){ 250, 200, 45, 255 });
+    const char* sub = "Spin for free to unbox rare shaders and equip them to your crabs!";
+    int sw = MeasureText(sub, 15);
+    DrawText(sub, (screen_w - sw) / 2, 54, 15, (Color){ 175, 185, 205, 255 });
+
+    // Navigation hint
+    DrawText("[ESC] Menu", 16, 16, 14, (Color){ 130, 140, 165, 200 });
+
+    // --- HORIZONTAL CS2-STYLE ROULETTE REEL ---
+    int reel_x = 20;
+    int reel_y = 80;
+    int reel_w = screen_w - 40;
+    int reel_h = 145;
+
+    // Outer frame of the reel
+    DrawRectangleRounded((Rectangle){ reel_x - 3, reel_y - 3, reel_w + 6, reel_h + 6 }, 0.1f, 4, (Color){ 10, 12, 18, 240 });
+    DrawRectangleRounded((Rectangle){ reel_x, reel_y, reel_w, reel_h }, 0.1f, 4, (Color){ 22, 25, 36, 255 });
+    DrawRectangleRoundedLinesEx((Rectangle){ reel_x, reel_y, reel_w, reel_h }, 0.1f, 4, 2, (Color){ 60, 68, 95, 255 });
+
+    // Scissor mode to cleanly clip items inside reel
+    BeginScissorMode(reel_x, reel_y, reel_w, reel_h);
+
+    int card_w = 125;
+    int card_h = 125;
+    int card_step = 140;
+
+    for (int i = 0; i < 64; i++) {
+        float cx = 400.0f + (float)i * card_step - state->gambling.reel_pos - (card_w / 2.0f);
+        if (cx + card_w < reel_x || cx > reel_x + reel_w) {
+            continue; // Skip off-screen cards
+        }
+
+        int s_id = state->gambling.reel_items[i];
+        Color rCol = GetShaderRarityColor(s_id);
+
+        Rectangle card_rec = { cx, reel_y + 10, card_w, card_h };
+        DrawRectangleRounded(card_rec, 0.12f, 4, (Color){ 30, 34, 48, 255 });
+        DrawRectangleRoundedLinesEx(card_rec, 0.12f, 4, 2, rCol);
+
+        // Bottom rarity stripe
+        DrawRectangleRounded((Rectangle){ cx + 2, reel_y + card_h - 10, card_w - 4, 18 }, 0.2f, 4, rCol);
+
+        // Card icon: preview ferris with shader
+        if (state->player1.texture.id != 0) {
+            float r = (float)state->player1.texture.width / (float)state->player1.texture.height;
+            float icon_h = 60.0f;
+            float icon_w = icon_h * r;
+            Rectangle icon_dest = { cx + (card_w - icon_w) / 2.0f, reel_y + 18, icon_w, icon_h };
+
+            if (s_id > 0) {
+                ApplyCrabShader(s_id, state->run_time);
+            }
+            DrawTexturePro(state->player1.texture,
+                (Rectangle){ 0, 0, (float)state->player1.texture.width, (float)state->player1.texture.height },
+                icon_dest, (Vector2){ 0, 0 }, 0.0f, WHITE);
+            if (s_id > 0) {
+                EndCrabShader();
+            }
+        }
+
+        // Shader name
+        const char* sname = GetShaderName(s_id);
+        int snw = MeasureText(sname, 12);
+        DrawText(sname, cx + (card_w - snw) / 2, reel_y + 84, 12, WHITE);
+
+        // Rarity text
+        const char* rname = GetShaderRarityName(s_id);
+        int rnw = MeasureText(rname, 11);
+        DrawText(rname, cx + (card_w - rnw) / 2, reel_y + 115, 11, (Color){ 15, 15, 20, 255 });
+    }
+
+    EndScissorMode();
+
+    // Center Selection Indicator (CS2 Gold Needle)
+    float needle_x = 400.0f;
+    DrawLineEx((Vector2){ needle_x, reel_y }, (Vector2){ needle_x, reel_y + reel_h }, 3, (Color){ 255, 215, 50, 240 });
+    // Top arrow
+    DrawTriangle((Vector2){ needle_x - 9, reel_y }, (Vector2){ needle_x + 9, reel_y }, (Vector2){ needle_x, reel_y + 16 }, (Color){ 255, 215, 50, 255 });
+    // Bottom arrow
+    DrawTriangle((Vector2){ needle_x, reel_y + reel_h - 16 }, (Vector2){ needle_x + 9, reel_y + reel_h }, (Vector2){ needle_x - 9, reel_y + reel_h }, (Color){ 255, 215, 50, 255 });
+
+    // --- SPIN BUTTON / WIN BANNER ---
+    Vector2 mouse = GetMousePosition();
+    Rectangle spin_btn = { (screen_w - 220) / 2, reel_y + reel_h + 16, 220, 46 };
+    bool hover_spin = CheckCollisionPointRec(mouse, spin_btn);
+
+    if (state->gambling.is_spinning) {
+        DrawRectangleRounded(spin_btn, 0.25f, 4, (Color){ 60, 65, 80, 220 });
+        DrawRectangleRoundedLinesEx(spin_btn, 0.25f, 4, 2, (Color){ 100, 110, 135, 255 });
+        const char* sp_txt = "OPENING...";
+        int sp_w = MeasureText(sp_txt, 20);
+        DrawText(sp_txt, spin_btn.x + (spin_btn.width - sp_w) / 2, spin_btn.y + 13, 20, LIGHTGRAY);
+    } else {
+        Color s_bg = hover_spin ? (Color){ 45, 165, 85, 255 } : (Color){ 30, 125, 60, 240 };
+        Color s_border = hover_spin ? (Color){ 100, 240, 145, 255 } : (Color){ 55, 185, 95, 255 };
+        DrawRectangleRounded(spin_btn, 0.25f, 4, s_bg);
+        DrawRectangleRoundedLinesEx(spin_btn, 0.25f, 4, 2, s_border);
+        const char* sp_txt = "SPIN (FREE)";
+        int sp_w = MeasureText(sp_txt, 20);
+        DrawText(sp_txt, spin_btn.x + (spin_btn.width - sp_w) / 2, spin_btn.y + 13, 20, WHITE);
+
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && hover_spin) {
+            start_gambling_spin(state);
+        }
+    }
+
+    // Unbox result banner
+    if (state->gambling.has_won && !state->gambling.is_spinning) {
+        int w_id = state->gambling.winning_shader;
+        Color win_col = GetShaderRarityColor(w_id);
+
+        Rectangle win_card = { (screen_w - 560) / 2, reel_y + reel_h + 68, 560, 72 };
+        DrawRectangleRounded(win_card, 0.15f, 4, (Color){ 20, 24, 38, 250 });
+        DrawRectangleRoundedLinesEx(win_card, 0.15f, 4, 2, win_col);
+
+        char unbox_txt[128];
+        snprintf(unbox_txt, sizeof(unbox_txt), "UNBOXED: %s (%s)!", GetShaderName(w_id), GetShaderRarityName(w_id));
+        int ut_w = MeasureText(unbox_txt, 16);
+        DrawText(unbox_txt, win_card.x + (win_card.width - ut_w) / 2, win_card.y + 6, 16, win_col);
+
+        const char* choice_prompt = "Select who gets this shader (only that character receives it):";
+        int cp_w = MeasureText(choice_prompt, 12);
+        DrawText(choice_prompt, win_card.x + (win_card.width - cp_w) / 2, win_card.y + 25, 12, (Color){ 180, 190, 210, 255 });
+
+        // Distinct choice buttons: Give to Rust Crab OR Give to C++ Crab
+        Rectangle eq1_btn = { win_card.x + 20, win_card.y + 42, 245, 22 };
+        Rectangle eq2_btn = { win_card.x + 295, win_card.y + 42, 245, 22 };
+        bool h_eq1 = CheckCollisionPointRec(mouse, eq1_btn);
+        bool h_eq2 = CheckCollisionPointRec(mouse, eq2_btn);
+
+        DrawRectangleRounded(eq1_btn, 0.2f, 4, h_eq1 ? (Color){ 45, 95, 215, 255 } : (Color){ 25, 55, 125, 240 });
+        DrawRectangleRoundedLinesEx(eq1_btn, 0.2f, 4, 1, (Color){ 80, 155, 255, 255 });
+        const char* g1_txt = "Give to Rust Crab";
+        int g1_w = MeasureText(g1_txt, 13);
+        DrawText(g1_txt, eq1_btn.x + (eq1_btn.width - g1_w) / 2, eq1_btn.y + 4, 13, WHITE);
+
+        DrawRectangleRounded(eq2_btn, 0.2f, 4, h_eq2 ? (Color){ 195, 145, 25, 255 } : (Color){ 115, 80, 15, 240 });
+        DrawRectangleRoundedLinesEx(eq2_btn, 0.2f, 4, 1, (Color){ 255, 205, 55, 255 });
+        const char* g2_txt = "Give to C++ Crab";
+        int g2_w = MeasureText(g2_txt, 13);
+        DrawText(g2_txt, eq2_btn.x + (eq2_btn.width - g2_w) / 2, eq2_btn.y + 4, 13, WHITE);
+
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+            if (h_eq1) {
+                state->player1.owned_shaders[w_id] = true;
+                state->player1.shader_id = w_id;
+                state->gambling.has_won = false;
+            } else if (h_eq2) {
+                state->player2.owned_shaders[w_id] = true;
+                state->player2.shader_id = w_id;
+                state->gambling.has_won = false;
+            }
+        }
+    }
+
+    // --- SHADER SELECTOR & AVATAR PREVIEW PANELS ---
+    int panel_y = 425;
+    int panel_w = 360;
+    int panel_h = 350;
+
+    // LEFT: Rust Crab (Blue)
+    int p1_panel_x = 25;
+    DrawRectangleRounded((Rectangle){ p1_panel_x, panel_y, panel_w, panel_h }, 0.1f, 4, (Color){ 20, 24, 36, 240 });
+    DrawRectangleRoundedLinesEx((Rectangle){ p1_panel_x, panel_y, panel_w, panel_h }, 0.1f, 4, 2, (Color){ 65, 125, 230, 255 });
+
+    DrawText("RUST CRAB SHADER", p1_panel_x + 20, panel_y + 14, 18, (Color){ 100, 180, 255, 255 });
+
+    // Live Avatar Preview for Rust Crab
+    if (state->player1.texture.id != 0) {
+        float r1 = (float)state->player1.texture.width / (float)state->player1.texture.height;
+        float prev_h = 90.0f;
+        float prev_w = prev_h * r1;
+        Rectangle prev_rec = { p1_panel_x + (panel_w - prev_w) / 2.0f, panel_y + 40, prev_w, prev_h };
+
+        if (state->player1.shader_id > 0) {
+            ApplyCrabShader(state->player1.shader_id, state->run_time);
+        }
+        DrawTexturePro(state->player1.texture,
+            (Rectangle){ 0, 0, (float)state->player1.texture.width, (float)state->player1.texture.height },
+            prev_rec, (Vector2){ 0, 0 }, 0.0f, WHITE);
+        if (state->player1.shader_id > 0) {
+            EndCrabShader();
+        }
+    }
+
+    const char* curr_s1 = GetShaderName(state->player1.shader_id);
+    char eq_lbl1[64];
+    snprintf(eq_lbl1, sizeof(eq_lbl1), "Active: %s", curr_s1);
+    int e1_w = MeasureText(eq_lbl1, 14);
+    DrawText(eq_lbl1, p1_panel_x + (panel_w - e1_w) / 2, panel_y + 135, 14, GetShaderRarityColor(state->player1.shader_id));
+
+    // Shader buttons for Rust Crab (2 columns of 3 buttons)
+    int btn_w = 160;
+    int btn_h = 36;
+    for (int s = 0; s < SHADER_COUNT; s++) {
+        int col = s % 2;
+        int row = s / 2;
+        int bx = p1_panel_x + 15 + col * 170;
+        int by = panel_y + 160 + row * 44;
+        Rectangle b_rec = { bx, by, btn_w, btn_h };
+        bool h_btn = CheckCollisionPointRec(mouse, b_rec);
+        bool is_owned = state->player1.owned_shaders[s];
+        bool is_active = (state->player1.shader_id == s);
+
+        if (is_owned) {
+            Color bg = is_active ? (Color){ 45, 95, 210, 255 } : (h_btn ? (Color){ 40, 48, 68, 255 } : (Color){ 28, 32, 45, 255 });
+            Color border = is_active ? (Color){ 120, 195, 255, 255 } : GetShaderRarityColor(s);
+
+            DrawRectangleRounded(b_rec, 0.2f, 4, bg);
+            DrawRectangleRoundedLinesEx(b_rec, 0.2f, 4, is_active ? 2 : 1, border);
+
+            const char* s_name = GetShaderName(s);
+            int tw = MeasureText(s_name, 13);
+            DrawText(s_name, bx + (btn_w - tw) / 2, by + 11, 13, is_active ? WHITE : (Color){ 210, 215, 230, 255 });
+
+            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && h_btn) {
+                state->player1.shader_id = s;
+            }
+        } else {
+            // Locked
+            DrawRectangleRounded(b_rec, 0.2f, 4, (Color){ 16, 18, 25, 220 });
+            DrawRectangleRoundedLinesEx(b_rec, 0.2f, 4, 1, (Color){ 38, 42, 55, 200 });
+
+            const char* s_name = GetShaderName(s);
+            int tw = MeasureText(s_name, 11);
+            DrawText(s_name, bx + (btn_w - tw) / 2, by + 4, 11, (Color){ 110, 115, 130, 220 });
+
+            const char* lock_txt = "[Locked]";
+            int ltw = MeasureText(lock_txt, 11);
+            DrawText(lock_txt, bx + (btn_w - ltw) / 2, by + 18, 11, (Color){ 160, 75, 75, 220 });
+        }
+    }
+
+    // RIGHT: C++ Crab (Yellow)
+    int p2_panel_x = screen_w - panel_w - 25;
+    DrawRectangleRounded((Rectangle){ p2_panel_x, panel_y, panel_w, panel_h }, 0.1f, 4, (Color){ 24, 22, 20, 240 });
+    DrawRectangleRoundedLinesEx((Rectangle){ p2_panel_x, panel_y, panel_w, panel_h }, 0.1f, 4, 2, (Color){ 245, 195, 45, 255 });
+
+    DrawText("C++ CRAB SHADER", p2_panel_x + 20, panel_y + 14, 18, (Color){ 255, 215, 65, 255 });
+
+    // Live Avatar Preview for C++ Crab
+    if (state->player2.texture.id != 0) {
+        float r2 = (float)state->player2.texture.width / (float)state->player2.texture.height;
+        float prev_h = 90.0f;
+        float prev_w = prev_h * r2;
+        Rectangle prev_rec = { p2_panel_x + (panel_w - prev_w) / 2.0f, panel_y + 40, prev_w, prev_h };
+
+        if (state->player2.shader_id > 0) {
+            ApplyCrabShader(state->player2.shader_id, state->run_time);
+        }
+        DrawTexturePro(state->player2.texture,
+            (Rectangle){ 0, 0, -(float)state->player2.texture.width, (float)state->player2.texture.height },
+            prev_rec, (Vector2){ 0, 0 }, 0.0f, WHITE);
+        if (state->player2.shader_id > 0) {
+            EndCrabShader();
+        }
+    }
+
+    const char* curr_s2 = GetShaderName(state->player2.shader_id);
+    char eq_lbl2[64];
+    snprintf(eq_lbl2, sizeof(eq_lbl2), "Active: %s", curr_s2);
+    int e2_w = MeasureText(eq_lbl2, 14);
+    DrawText(eq_lbl2, p2_panel_x + (panel_w - e2_w) / 2, panel_y + 135, 14, GetShaderRarityColor(state->player2.shader_id));
+
+    // Shader buttons for C++ Crab (2 columns of 3 buttons)
+    for (int s = 0; s < SHADER_COUNT; s++) {
+        int col = s % 2;
+        int row = s / 2;
+        int bx = p2_panel_x + 15 + col * 170;
+        int by = panel_y + 160 + row * 44;
+        Rectangle b_rec = { bx, by, btn_w, btn_h };
+        bool h_btn = CheckCollisionPointRec(mouse, b_rec);
+        bool is_owned = state->player2.owned_shaders[s];
+        bool is_active = (state->player2.shader_id == s);
+
+        if (is_owned) {
+            Color bg = is_active ? (Color){ 195, 145, 25, 255 } : (h_btn ? (Color){ 55, 48, 30, 255 } : (Color){ 35, 30, 22, 255 });
+            Color border = is_active ? (Color){ 255, 225, 80, 255 } : GetShaderRarityColor(s);
+
+            DrawRectangleRounded(b_rec, 0.2f, 4, bg);
+            DrawRectangleRoundedLinesEx(b_rec, 0.2f, 4, is_active ? 2 : 1, border);
+
+            const char* s_name = GetShaderName(s);
+            int tw = MeasureText(s_name, 13);
+            DrawText(s_name, bx + (btn_w - tw) / 2, by + 11, 13, is_active ? WHITE : (Color){ 230, 220, 205, 255 });
+
+            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && h_btn) {
+                state->player2.shader_id = s;
+            }
+        } else {
+            // Locked
+            DrawRectangleRounded(b_rec, 0.2f, 4, (Color){ 20, 18, 16, 220 });
+            DrawRectangleRoundedLinesEx(b_rec, 0.2f, 4, 1, (Color){ 45, 40, 35, 200 });
+
+            const char* s_name = GetShaderName(s);
+            int tw = MeasureText(s_name, 11);
+            DrawText(s_name, bx + (btn_w - tw) / 2, by + 4, 11, (Color){ 120, 115, 105, 220 });
+
+            const char* lock_txt = "[Locked]";
+            int ltw = MeasureText(lock_txt, 11);
+            DrawText(lock_txt, bx + (btn_w - ltw) / 2, by + 18, 11, (Color){ 160, 75, 75, 220 });
+        }
+    }
+}
+
 void DrawGame(GameState* state, float subtick_alpha) {
     BeginDrawing();
     ClearBackground(WALAHI_COLOUR);
@@ -395,8 +736,10 @@ void DrawGame(GameState* state, float subtick_alpha) {
             draw_walahi(state, subtick_alpha);
             break;
         case HOME:
-            state->buttons.rect[0] = (Rectangle){ 260, 260, 280, 56 };
-            state->buttons.rect[1] = (Rectangle){ 260, 335, 280, 56 };
+            state->buttons.num = 3;
+            state->buttons.rect[0] = (Rectangle){ 260, 240, 280, 52 };
+            state->buttons.rect[1] = (Rectangle){ 260, 310, 280, 52 };
+            state->buttons.rect[2] = (Rectangle){ 260, 380, 280, 52 };
             draw_home(state, subtick_alpha);
             break;
         case ARENA:
@@ -404,6 +747,9 @@ void DrawGame(GameState* state, float subtick_alpha) {
             break;
         case WIN_SCREEN:
             DrawWinScreen(state, subtick_alpha);
+            break;
+        case GAMBLING:
+            draw_gambling(state, subtick_alpha);
             break;
     }
 
